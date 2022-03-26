@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "build-lib": "rollup --c"
+    "build-lib": "rollup --c",
+    "chromatic": "npx chromatic --project-token=11211ca7ece4"
   },
   "keywords": [
     "react"
@@ -29,6 +30,7 @@
     "@storybook/testing-library": "^0.0.9",
     "@types/styled-components": "^5.1.24",
     "babel-loader": "^8.2.4",
+    "chromatic": "^6.5.3",
     "eslint-config-react-app": "^7.0.0",
     "postcss": "^8.4.12",
     "react": "^17.0.2",

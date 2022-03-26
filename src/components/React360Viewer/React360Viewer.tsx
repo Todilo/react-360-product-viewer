@@ -56,8 +56,8 @@ export const React360Viewer = ({
   reverse,
   autoplaySpeed = 10,
   autoplay,
-  width = 200,
-  height = 200,
+  width = 150,
+  height = 150,
 }: React360ViewerProps) => {
   const elementRef = useRef(null);
   const [isScrolling, setIsScrolling] = useState(false);
