@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
+import AnimationImage from "../AnimationImage/AnimationImage";
+import StyledRotateIcon from "../icons/StyledRotateIcon";
 
-function moduloWithoutNegative(value: number, n: number) {
+// The regular % can return negative numbers.
+function moduloWithoutNegative(value: number, n: number): number {
   return ((value % n) + n) % n;
 }
 
@@ -10,12 +13,17 @@ export interface React360ViewerProps {
   imagesBaseUrl: string;
   imagesFiletype: string;
   imageFilenamePrefix: string;
+  imageInitialIndex?: number;
   mouseDragSpeed?: number;
   autoplaySpeed?: number;
   reverse: boolean;
   autoplay: boolean;
   width?: number;
   height?: number;
+  showRotationIconOnStartup: boolean;
+  notifyOnPointerDown?: (x: number, y: number) => void;
+  notifyOnPointerUp?: (x: number, y: number) => void;
+  notifyOnPointerMoved?: (x: number, y: number) => void;
 }
 
 interface StyleProps {
@@ -23,8 +31,8 @@ interface StyleProps {
 }
 
 const StyledDiv = styled.div<StyleProps>`
+  position: relative;
   border: none;
-  border-radius: 16px;
   padding: 5px;
   display: inline-block;
   user-select: none;
@@ -39,14 +47,6 @@ const StyledDiv = styled.div<StyleProps>`
         `};
 `;
 
-interface StyledImageProps {}
-const StyledImage = styled.img<StyledImageProps>`
-  user-select: "none";
-  touch-action: "none";
-  display: d;
-  cursor: "inherit";
-`;
-
 export const React360Viewer = ({
   imagesCount,
   imagesBaseUrl,
@@ -58,32 +58,56 @@ export const React360Viewer = ({
   autoplay,
   width = 150,
   height = 150,
+  showRotationIconOnStartup,
+  imageInitialIndex,
+  notifyOnPointerDown,
+  notifyOnPointerUp,
+  notifyOnPointerMoved,
 }: React360ViewerProps) => {
   const elementRef = useRef(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [initialMousePosition, setInitialMousePosition] = useState(0);
-  const [initialImageIndex, setInitialImageIndex] = useState(0);
+  const [startingImageIndexOnPointerDown, setStartingImageIndexOnPointerDown] =
+    useState(0);
   const [currentMousePosition, setCurrentMousePosition] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageSources, setImageSources] = useState<
     Array<{ src: string; index: string }>
   >([]);
 
+  const [showRotationIcon, setShowRotationIcon] = useState(
+    showRotationIconOnStartup
+  );
   const [useAutoplay, setUseAutoplay] = useState(autoplay);
   useEffect(() => {
     setUseAutoplay(autoplay);
-  }, [autoplay]);
+
+    setShowRotationIcon(!autoplay && showRotationIconOnStartup);
+  }, [autoplay, showRotationIconOnStartup]);
+
+  useEffect(() => {
+    if (typeof imageInitialIndex === "undefined") return;
+    if (imageInitialIndex < 0 || imageInitialIndex >= imagesCount) {
+      setSelectedImageIndex(imageInitialIndex);
+      console.log(
+        `ImageInitialIndex of ${imageInitialIndex} was out of bounds of 0 and count: ${imagesCount}`
+      );
+    }
+
+    setSelectedImageIndex(imageInitialIndex);
+  }, [imageInitialIndex, imagesCount]);
 
   useEffect(() => {
     if (!useAutoplay) return;
+
     const timer = setTimeout(() => {
-      incrementImage(1);
+      incrementImageIndex(1);
     }, 1000 / autoplaySpeed);
 
     return () => clearTimeout(timer);
   });
 
-  const incrementImage = (change: number) => {
+  const incrementImageIndex = (change: number) => {
     let index = moduloWithoutNegative(
       selectedImageIndex + (reverse ? -1 : 1) * Math.floor(change),
       imagesCount
@@ -121,20 +145,26 @@ export const React360Viewer = ({
   const onMouseDown = (e: React.MouseEvent) => {
     setInitialMousePosition(e.clientX);
     setCurrentMousePosition(e.clientX);
-    setInitialImageIndex(selectedImageIndex);
+    setStartingImageIndexOnPointerDown(selectedImageIndex);
     setUseAutoplay(false);
     setIsScrolling(true);
-
+    setShowRotationIcon(false);
     // We prevent-default so user can't "grab" the image
     e.preventDefault();
+
+    notifyOnPointerDown?.(e.clientX, e.clientY);
   };
 
-  const onMouseUp = () => {
+  const onMouseUp = (e?: React.MouseEvent) => {
     setIsScrolling(false);
+    if (typeof e !== "undefined") notifyOnPointerUp?.(e?.clientX, e.clientY);
+    else notifyOnPointerUp?.(0, 0);
   };
 
   const onMouseMove = (e: React.MouseEvent) => {
     if (!isScrolling) return;
+    notifyOnPointerMoved?.(e.clientX, e.clientY);
+
     setCurrentMousePosition(e.clientX);
   };
 
@@ -149,6 +179,8 @@ export const React360Viewer = ({
 
     if (!isScrolling) return;
 
+    // Aim is to get a speedfactor that can be easily adjusted from a user perspective
+    // as well as proportionate to the size of the image.
     const scaleFactor = 100;
     let speedFactor =
       (1 / mouseDragSpeed) * ((imagesCount * width) / scaleFactor);
@@ -156,11 +188,11 @@ export const React360Viewer = ({
 
     let difference = changeInX / speedFactor;
 
-    imageIndexWithOffset(initialImageIndex, difference);
+    imageIndexWithOffset(startingImageIndexOnPointerDown, difference);
   }, [
     currentMousePosition,
     imagesCount,
-    initialImageIndex,
+    startingImageIndexOnPointerDown,
     initialMousePosition,
     isScrolling,
     mouseDragSpeed,
@@ -179,35 +211,18 @@ export const React360Viewer = ({
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}
     >
+      {showRotationIcon ? (
+        <StyledRotateIcon widthInEm={2} isReverse={reverse}></StyledRotateIcon>
+      ) : null}
       {imageSources.map((s, index) => (
-        <Image
+        <AnimationImage
           src={s.src}
           width={width}
           height={height}
           isVisible={index === selectedImageIndex}
           key={index}
-        ></Image>
+        ></AnimationImage>
       ))}
     </StyledDiv>
-  );
-};
-
-interface ImageProps {
-  src: string;
-  isVisible: boolean;
-  width: number;
-  height: number;
-}
-
-const Image = ({ src, isVisible, width, height }: ImageProps) => {
-  let d = isVisible ? "block" : "none";
-  return (
-    <StyledImage
-      alt="Rotating object"
-      src={src}
-      width={width}
-      height={height}
-      style={{ display: d }}
-    ></StyledImage>
   );
 };

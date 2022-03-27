@@ -9,6 +9,11 @@ import {
 export default {
   title: "React360Viewer",
   component: React360Viewer,
+  argTypes: {
+    notifyOnPointerDown: { action: "notifyOnPointerDown" },
+    notifyOnPointerMoved: { action: "notifyOnPointerMoved" },
+    notifyOnPointerUp: { action: "notifyOnPointerUp" },
+  },
 } as ComponentMeta<typeof React360Viewer>;
 
 const Template: ComponentStory<typeof React360Viewer> = (
@@ -45,3 +50,10 @@ AutoPlayReversed.args = {
   reverse: true,
   autoplay: true,
 };
+
+export const DisplayMoveNotifications = Template.bind({});
+
+DisplayMoveNotifications.args = {
+  ...baseImageSetting,
+  reverse: false,
+} as React360ViewerProps;
