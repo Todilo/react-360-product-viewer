@@ -50,10 +50,6 @@ AutoPlayReversed.args = {
   reverse: true,
   autoplay: true,
 };
-
-export const DisplayMoveNotifications = Template.bind({});
-
-DisplayMoveNotifications.args = {
-  ...baseImageSetting,
-  reverse: false,
-} as React360ViewerProps;
+AutoPlayReversed.parameters = {
+  chromatic: { disableSnapshot: true },
+};
