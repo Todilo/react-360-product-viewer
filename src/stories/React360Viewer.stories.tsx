@@ -9,6 +9,11 @@ import {
 export default {
   title: "React360Viewer",
   component: React360Viewer,
+  argTypes: {
+    notifyOnPointerDown: { action: "notifyOnPointerDown" },
+    notifyOnPointerMoved: { action: "notifyOnPointerMoved" },
+    notifyOnPointerUp: { action: "notifyOnPointerUp" },
+  },
 } as ComponentMeta<typeof React360Viewer>;
 
 const Template: ComponentStory<typeof React360Viewer> = (
@@ -44,4 +49,7 @@ AutoPlayReversed.args = {
   ...baseImageSetting,
   reverse: true,
   autoplay: true,
+};
+AutoPlayReversed.parameters = {
+  chromatic: { disableSnapshot: true },
 };
