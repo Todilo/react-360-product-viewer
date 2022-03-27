@@ -17,7 +17,7 @@ const Template: ComponentStory<typeof React360Viewer> = (
   return (
     <div
       style={{
-        border: "1px solid black",
+        border: "1px solid red",
         borderRadius: "5px",
         boxShadow: "5px 5px 5px grey",
       }}

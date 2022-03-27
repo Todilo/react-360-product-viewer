@@ -10,7 +10,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "build-lib": "rollup --c",
-    "chromatic": "npx chromatic --project-token=11211ca7ece4"
+    "chromatic": "npx chromatic --project-token=11211ca7ece4",
+    "deploy-storybook": "storybook-to-ghpages"
   },
   "keywords": [
     "react"
@@ -27,6 +28,7 @@
     "@storybook/addon-interactions": "^6.4.19",
     "@storybook/addon-links": "^6.4.19",
     "@storybook/react": "^6.4.19",
+    "@storybook/storybook-deployer": "^2.8.11",
     "@storybook/testing-library": "^0.0.9",
     "@types/styled-components": "^5.1.24",
     "babel-loader": "^8.2.4",
