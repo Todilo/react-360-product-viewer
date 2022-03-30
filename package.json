@@ -59,5 +59,8 @@
     "ignorePatterns": [
       "**/protos/*.ts"
     ]
-  }
+  },
+  "files": [
+    "dist/*.*"
+  ]
 }

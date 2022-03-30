@@ -16,14 +16,15 @@ export interface React360ViewerProps {
   imageInitialIndex?: number;
   mouseDragSpeed?: number;
   autoplaySpeed?: number;
-  reverse: boolean;
-  autoplay: boolean;
+  reverse?: boolean;
+  autoplay?: boolean;
   width?: number;
   height?: number;
-  showRotationIconOnStartup: boolean;
+  showRotationIconOnStartup?: boolean;
   notifyOnPointerDown?: (x: number, y: number) => void;
   notifyOnPointerUp?: (x: number, y: number) => void;
   notifyOnPointerMoved?: (x: number, y: number) => void;
+  shouldNotifyEvents?: boolean;
 }
 
 interface StyleProps {
@@ -53,13 +54,14 @@ export const React360Viewer = ({
   imagesFiletype,
   imageFilenamePrefix,
   mouseDragSpeed = 20,
-  reverse,
+  reverse = false,
   autoplaySpeed = 10,
-  autoplay,
+  autoplay = false,
   width = 150,
   height = 150,
-  showRotationIconOnStartup,
-  imageInitialIndex,
+  showRotationIconOnStartup = false,
+  imageInitialIndex = 0,
+  shouldNotifyEvents = false,
   notifyOnPointerDown,
   notifyOnPointerUp,
   notifyOnPointerMoved,
@@ -118,12 +120,16 @@ export const React360Viewer = ({
 
   useEffect(() => {
     function createImageSources() {
+      let baseUrl = imagesBaseUrl.endsWith("/")
+        ? imagesBaseUrl
+        : imagesBaseUrl + "/";
       let srces = [];
+      let fileType = imagesFiletype.replace(".", "");
       for (let i = 1; i <= imagesCount; i++) {
         srces.push({
-          src: `${imagesBaseUrl}${
+          src: `${baseUrl}${
             imageFilenamePrefix ? imageFilenamePrefix : ""
-          }${i}.${imagesFiletype}`,
+          }${i}.${fileType}`,
           index: i.toString(),
         });
       }
@@ -132,16 +138,6 @@ export const React360Viewer = ({
     setImageSources(createImageSources());
   }, [imagesBaseUrl, imagesFiletype, imagesCount, imageFilenamePrefix]);
 
-  useEffect(() => {
-    const releaseMouseOutsideComponent = () => {
-      onMouseUp();
-    };
-    window.addEventListener("mouseup", releaseMouseOutsideComponent);
-    return () => {
-      window.removeEventListener("mouseup", releaseMouseOutsideComponent);
-    };
-  }, []);
-
   const onMouseDown = (e: React.MouseEvent) => {
     setInitialMousePosition(e.clientX);
     setCurrentMousePosition(e.clientX);
@@ -149,23 +145,35 @@ export const React360Viewer = ({
     setUseAutoplay(false);
     setIsScrolling(true);
     setShowRotationIcon(false);
-    // We prevent-default so user can't "grab" the image
-    e.preventDefault();
 
-    notifyOnPointerDown?.(e.clientX, e.clientY);
+    document.addEventListener(
+      "mouseup",
+      () => {
+        onMouseUp();
+      },
+      { once: true }
+    );
+
+    if (shouldNotifyEvents) notifyOnPointerDown?.(e.clientX, e.clientY);
   };
 
   const onMouseUp = (e?: React.MouseEvent) => {
     setIsScrolling(false);
+
+    if (!shouldNotifyEvents) return;
+
     if (typeof e !== "undefined") notifyOnPointerUp?.(e?.clientX, e.clientY);
-    else notifyOnPointerUp?.(0, 0);
+    else {
+      notifyOnPointerUp?.(0, 0);
+    }
   };
 
   const onMouseMove = (e: React.MouseEvent) => {
     if (!isScrolling) return;
-    notifyOnPointerMoved?.(e.clientX, e.clientY);
 
     setCurrentMousePosition(e.clientX);
+
+    if (shouldNotifyEvents) notifyOnPointerMoved?.(e.clientX, e.clientY);
   };
 
   useEffect(() => {
@@ -200,16 +208,16 @@ export const React360Viewer = ({
     height,
     reverse,
   ]);
+
   return (
     <StyledDiv
       ref={elementRef}
       isGrabbing={isScrolling}
       onPointerDown={onMouseDown}
-      onPointerUp={onMouseUp}
+      // onPointerUp={onMouseUp}
       onPointerMove={onMouseMove}
-      onMouseDown={onMouseDown}
-      onMouseUp={onMouseUp}
-      onMouseMove={onMouseMove}
+      // onMouseDown={onMouseDown}
+      // onMouseMove={onMouseMove}
     >
       {showRotationIcon ? (
         <StyledRotateIcon widthInEm={2} isReverse={reverse}></StyledRotateIcon>
