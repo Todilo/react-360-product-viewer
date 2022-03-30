@@ -10,10 +10,10 @@ interface ImageProps {
 
 interface StyledImageProps {}
 const StyledImage = styled.img<StyledImageProps>`
-  user-select: "none";
-  touch-action: "none";
-  display: d;
-  cursor: "inherit";
+  user-select: none;
+  touch-action: none;
+  cursor: inherit;
+  -webkit-user-drag: none;
 `;
 
 const AnimationImage = ({ src, isVisible, width, height }: ImageProps) => {
@@ -24,7 +24,7 @@ const AnimationImage = ({ src, isVisible, width, height }: ImageProps) => {
       src={src}
       width={width}
       height={height}
-      style={{ display: d }}
+      style={{ display: `${d}` }}
     ></StyledImage>
   );
 };
