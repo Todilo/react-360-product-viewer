@@ -54,7 +54,7 @@
 ## About React 360 Product Viewer
 
 <p align="center">
-  <img width="188" height="189" src="readme-examples/example1.gif">
+  <img width="188" height="189" src="https://raw.githubusercontent.com/Todilo/react-360-product-viewer/master/readme-examples/example1.gif">
 </p>
 
 There are a few javascript product viewers out there but none could deliver what I needed. A React component written in Typescript and free!
@@ -127,6 +127,27 @@ _For more example and a playground please refer to [storybook](https://todilo.gi
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+# API
+
+| Parameter                 | Type     | Default | Description                                                                                                                      | Example                                      |
+| ------------------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| imagesCount               | number   | none    | Set the number of images in your sequence                                                                                        | 35                                           |
+| imageBaseUrl              | string   | none    | Set URL from the base of your homepage                                                                                           | ./imageSeries/                               |
+| imagesFileTyp             | string   | none    | Image type (anything that can be rendered in an _img_ tag)                                                                       | png                                          |
+| imageFilenamePrefix       | string   | none    | Add a prefix before the image number                                                                                             | shoe (if entire image filename is shoe2.png) |
+| imageInitialIndex         | number   | 0       | Which imagenumber to show on component load                                                                                      | 10                                           |
+| mouseDragSPeed            | number   | 20      | How fast to change images when pointer moves                                                                                     | 20                                           |
+| autoplaySpeed             | number   | 10      | How fast to change images when autoplay is active                                                                                | 10                                           |
+| reverse                   | boolean  | false   | Reverse the order of images displayed. Applicable for both pointer as well as autoplay                                           | false                                        |
+| autoplay                  | boolean  | false   | Should the images automatically change on component load                                                                         | false                                        |
+| width                     | number   | 150     | With of the image                                                                                                                | 150                                          |
+| height                    | number   | 150     | Height of the image                                                                                                              | 150                                          |
+| showRotationIconOnStartup | boolean  | false   | If true, a small icon representing a rotation which should inform the user that the component can be rotated.                    | false                                        |
+| shouldNotifyEvents        | boolean  | false   | If true the component will notify on some events. This can be a lot of event so use with caution.                                | false                                        |
+| notifyOnPointerDown       | function | not set | Pass your own function that takes x, y as arguments. Will be called when mouse or touch is pressed.                              | -                                            |
+| notifyOnPointerUp         | function | not set | Pass your own function that takes x, y as arguments . Will be called when mouse or touch is released.                            | -                                            |
+| notifyOnPointerMoved      | function | not set | Pass your own function that takes x, y as arguments . Will be called any time the mouse or touch is moved if being pressed down. |                                              |
+
 <!-- ROADMAP -->
 
 ## Roadmap
@@ -135,7 +156,7 @@ _For more example and a playground please refer to [storybook](https://todilo.gi
 - [x] Start image index
 - [ ] Set autoplay to look x number of times
 - [ ] Release for NPM
-- [ ] Document API
+- [x] Document API
 - [ ] Allow for external URI:s as imagesources
 - [ ] Example on how to layout images
 - [ ] Add inertia
