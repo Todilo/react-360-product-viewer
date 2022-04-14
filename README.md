@@ -155,7 +155,7 @@ _For more example and a playground please refer to [storybook](https://todilo.gi
 - [x] Add rotate icon
 - [x] Start image index
 - [ ] Set autoplay to look x number of times
-- [ ] Release for NPM
+- [x] Release for NPM
 - [x] Document API
 - [ ] Allow for external URI:s as imagesources
 - [ ] Example on how to layout images
