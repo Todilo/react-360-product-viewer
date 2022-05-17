@@ -1,6 +1,6 @@
 {
   "name": "react-360-product-viewer",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Showcase your products in this 360 viewer component.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -19,10 +19,10 @@
   "author": "Christian Klinton",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.17.9",
-    "@babel/preset-react": "^7.16.7",
-    "@rollup/plugin-commonjs": "^21.0.3",
-    "@rollup/plugin-node-resolve": "^13.2.0",
+    "@babel/core": "^7.17.12",
+    "@babel/preset-react": "^7.17.12",
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@storybook/addon-actions": "^6.4.22",
     "@storybook/addon-essentials": "^6.4.22",
     "@storybook/addon-interactions": "^6.4.22",
@@ -31,28 +31,28 @@
     "@storybook/storybook-deployer": "^2.8.11",
     "@storybook/testing-library": "^0.0.9",
     "@types/styled-components": "^5.1.25",
-    "babel-loader": "^8.2.4",
+    "babel-loader": "^8.2.5",
     "chromatic": "^6.5.4",
     "eslint-config-react-app": "^7.0.1",
-    "postcss": "^8.4.12",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "rollup": "^2.70.1",
+    "postcss": "^8.4.13",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "rollup": "^2.73.0",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-ts": "^2.0.5"
+    "rollup-plugin-ts": "^2.0.7"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "styled-components": "^5.3.5"
   },
   "dependencies": {
-    "@types/react": "^18.0.4",
+    "@types/react": "^18.0.9",
     "styled-components": "^5.3.5",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.4"
   },
   "eslintConfig": {
     "extends": "react-app",
