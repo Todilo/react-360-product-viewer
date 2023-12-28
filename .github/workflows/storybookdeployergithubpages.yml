@@ -7,10 +7,11 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Install and Build 🔧
-        uses: actions/checkout@v4
-        with:
-         token: ${{ secrets.GH_TOKEN }}
-      - run: |
+        # This needs an Acces Token stored as "GH_TOKEN" 👇
+        run: |
           npm install --legacy-peer-deps
           npm run deploy-storybook -- --ci
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
