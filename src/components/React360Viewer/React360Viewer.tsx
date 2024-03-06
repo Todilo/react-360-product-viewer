@@ -20,6 +20,7 @@ export interface React360ViewerProps {
   autoplay?: boolean;
   width?: number;
   height?: number;
+  zeroPad?: boolean;
   showRotationIconOnStartup?: boolean;
   notifyOnPointerDown?: (x: number, y: number) => void;
   notifyOnPointerUp?: (x: number, y: number) => void;
@@ -59,6 +60,7 @@ export const React360Viewer = ({
   autoplay = false,
   width = 150,
   height = 150,
+  zeroPad = false,
   showRotationIconOnStartup = false,
   imageInitialIndex = 0,
   shouldNotifyEvents = false,
@@ -127,16 +129,22 @@ export const React360Viewer = ({
       let fileType = imagesFiletype.replace(".", "");
       for (let i = 1; i <= imagesCount; i++) {
         srces.push({
-          src: `${baseUrl}${
-            imageFilenamePrefix ? imageFilenamePrefix : ""
-          }${i}.${fileType}`,
+          src: `${baseUrl}${imageFilenamePrefix ? imageFilenamePrefix : ""}${
+            zeroPad ? String(i).padStart(2, "0") : i
+          }.${fileType}`,
           index: i.toString(),
         });
       }
       return srces;
     }
     setImageSources(createImageSources());
-  }, [imagesBaseUrl, imagesFiletype, imagesCount, imageFilenamePrefix]);
+  }, [
+    imagesBaseUrl,
+    imagesFiletype,
+    imagesCount,
+    imageFilenamePrefix,
+    zeroPad,
+  ]);
 
   const onMouseDown = (e: React.MouseEvent) => {
     setInitialMousePosition(e.clientX);
