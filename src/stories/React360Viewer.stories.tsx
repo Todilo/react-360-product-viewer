@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import React from "react";
 
 import {
@@ -14,9 +14,9 @@ export default {
     notifyOnPointerMoved: { action: "notifyOnPointerMoved" },
     notifyOnPointerUp: { action: "notifyOnPointerUp" },
   },
-} as ComponentMeta<typeof React360Viewer>;
+} as Meta<typeof React360Viewer>;
 
-const Template: ComponentStory<typeof React360Viewer> = (
+const Template: StoryFn<typeof React360Viewer> = (
   args: React360ViewerProps
 ) => {
   return (
