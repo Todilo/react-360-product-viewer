@@ -8,6 +8,8 @@ function moduloWithoutNegative(value: number, n: number): number {
   return ((value % n) + n) % n;
 }
 
+export type ZeroPadRange = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
 export interface React360ViewerProps {
   imagesCount: number;
   imagesBaseUrl: string;
@@ -20,6 +22,7 @@ export interface React360ViewerProps {
   autoplay?: boolean;
   width?: number;
   height?: number;
+  zeroPad?: ZeroPadRange;
   showRotationIconOnStartup?: boolean;
   notifyOnPointerDown?: (x: number, y: number) => void;
   notifyOnPointerUp?: (x: number, y: number) => void;
@@ -59,6 +62,7 @@ export const React360Viewer = ({
   autoplay = false,
   width = 150,
   height = 150,
+  zeroPad = 0,
   showRotationIconOnStartup = false,
   imageInitialIndex = 0,
   shouldNotifyEvents = false,
@@ -127,16 +131,22 @@ export const React360Viewer = ({
       let fileType = imagesFiletype.replace(".", "");
       for (let i = 1; i <= imagesCount; i++) {
         srces.push({
-          src: `${baseUrl}${
-            imageFilenamePrefix ? imageFilenamePrefix : ""
-          }${i}.${fileType}`,
+          src: `${baseUrl}${imageFilenamePrefix ? imageFilenamePrefix : ""}${
+            !!zeroPad ? String(i).padStart(zeroPad + 1, "0") : i
+          }.${fileType}`,
           index: i.toString(),
         });
       }
       return srces;
     }
     setImageSources(createImageSources());
-  }, [imagesBaseUrl, imagesFiletype, imagesCount, imageFilenamePrefix]);
+  }, [
+    imagesBaseUrl,
+    imagesFiletype,
+    imagesCount,
+    imageFilenamePrefix,
+    zeroPad,
+  ]);
 
   const onMouseDown = (e: React.MouseEvent) => {
     setInitialMousePosition(e.clientX);
