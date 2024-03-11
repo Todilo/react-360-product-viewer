@@ -20,6 +20,7 @@ export interface React360ViewerProps {
   autoplaySpeed?: number;
   reverse?: boolean;
   autoplay?: boolean;
+  autoplayTarget?: number;
   width?: number;
   height?: number;
   zeroPad?: ZeroPadRange;
@@ -60,6 +61,7 @@ export const React360Viewer = ({
   reverse = false,
   autoplaySpeed = 10,
   autoplay = false,
+  autoplayTarget,
   width = 150,
   height = 150,
   zeroPad = 0,
@@ -120,6 +122,10 @@ export const React360Viewer = ({
     );
 
     setSelectedImageIndex(index);
+
+    if (autoplayTarget !== undefined && index === autoplayTarget) {
+      setUseAutoplay(false);
+    }
   };
 
   useEffect(() => {
