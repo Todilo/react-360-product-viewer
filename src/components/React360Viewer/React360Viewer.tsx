@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import AnimationImage from "../AnimationImage/AnimationImage";
 import StyledRotateIcon from "../icons/StyledRotateIcon";
+import type { HtmlHTMLAttributes } from "react";
 
 // The regular % can return negative numbers.
 function moduloWithoutNegative(value: number, n: number): number {
@@ -20,6 +21,7 @@ export interface React360ViewerProps {
   autoplaySpeed?: number;
   reverse?: boolean;
   autoplay?: boolean;
+  autoplayTarget?: number;
   width?: number;
   height?: number;
   zeroPad?: ZeroPadRange;
@@ -29,6 +31,10 @@ export interface React360ViewerProps {
   notifyOnPointerMoved?: (x: number, y: number) => void;
   shouldNotifyEvents?: boolean;
 }
+
+/** Base props *and* all available HTML div element props. */
+export type React360ViewerPropsExtended = HtmlHTMLAttributes<HTMLDivElement> &
+  React360ViewerProps;
 
 interface StyleProps {
   isGrabbing: boolean;
@@ -60,6 +66,7 @@ export const React360Viewer = ({
   reverse = false,
   autoplaySpeed = 10,
   autoplay = false,
+  autoplayTarget,
   width = 150,
   height = 150,
   zeroPad = 0,
@@ -69,7 +76,7 @@ export const React360Viewer = ({
   notifyOnPointerDown,
   notifyOnPointerUp,
   notifyOnPointerMoved,
-}: React360ViewerProps) => {
+}: React360ViewerPropsExtended) => {
   const elementRef = useRef(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [initialMousePosition, setInitialMousePosition] = useState(0);
@@ -120,6 +127,10 @@ export const React360Viewer = ({
     );
 
     setSelectedImageIndex(index);
+
+    if (autoplayTarget !== undefined && index === autoplayTarget) {
+      setUseAutoplay(false);
+    }
   };
 
   useEffect(() => {
