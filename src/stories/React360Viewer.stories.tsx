@@ -17,7 +17,7 @@ export default {
 } as Meta<typeof React360Viewer>;
 
 const Template: StoryFn<typeof React360Viewer> = (
-  args: React360ViewerProps
+  args: React360ViewerProps,
 ) => {
   return (
     <div
