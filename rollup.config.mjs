@@ -3,20 +3,20 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import postcss from "rollup-plugin-postcss";
 import ts from "rollup-plugin-ts";
-import terser from '@rollup/plugin-terser';
+import terser from "@rollup/plugin-terser";
 
-const packageJson = require("./package.json");
+import packageJson from "./package.json" assert { type: "json" };
 
-export default {
+var config = {
   input: "./src/index.ts",
   output: [
     {
-      file: packageJson.main,
+      file: "dist/index.js",
       format: "cjs",
       sourcemap: true,
     },
     {
-      file: packageJson.module,
+      file: "dist/index.esm.js",
       format: "esm",
       sourcemap: true,
       exports: "named",
@@ -33,3 +33,4 @@ export default {
     terser(),
   ],
 };
+export default config;

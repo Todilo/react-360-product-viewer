@@ -162,7 +162,7 @@ _For more example and a playground please refer to [storybook](https://todilo.gi
 - [ ] Set autoplay to look x number of times
 - [x] Release for NPM
 - [x] Document API
-- [ ] Allow for external URI:s as imagesources
+- [x] Allow for external URI:s as imagesources
 - [ ] Example on how to layout images
 - [ ] Add inertia
 - [ ] Supply events
