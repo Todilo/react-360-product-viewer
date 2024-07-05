@@ -14,6 +14,7 @@ export type ZeroPadRange = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export interface React360ViewerProps {
   imagesCount: number;
   imagesBaseUrl: string;
+  imageIndexSeparator?: string;
   imagesFiletype: string;
   imageFilenamePrefix: string;
   imageInitialIndex?: number;
@@ -135,16 +136,23 @@ export const React360Viewer = ({
 
   useEffect(() => {
     function createImageSources() {
-      let baseUrl = imagesBaseUrl.endsWith("/")
-        ? imagesBaseUrl
-        : imagesBaseUrl + "/";
+
+      let baseUrl;
+
+      if (imageIndexSeparator !== undefined) {
+        baseUrl = imagesBaseUrl + imageIndexSeparator;
+      } else {
+        baseUrl = imagesBaseUrl.endsWith("/")
+          ? imagesBaseUrl
+          : imagesBaseUrl + "/";
+      };
+
       let srces = [];
       let fileType = imagesFiletype.replace(".", "");
       for (let i = 1; i <= imagesCount; i++) {
         srces.push({
-          src: `${baseUrl}${imageFilenamePrefix ? imageFilenamePrefix : ""}${
-            !!zeroPad ? String(i).padStart(zeroPad + 1, "0") : i
-          }.${fileType}`,
+          src: `${baseUrl}${imageFilenamePrefix ? imageFilenamePrefix : ""}${!!zeroPad ? String(i).padStart(zeroPad + 1, "0") : i
+            }.${fileType}`,
           index: i.toString(),
         });
       }
@@ -237,8 +245,8 @@ export const React360Viewer = ({
       onPointerDown={onMouseDown}
       // onPointerUp={onMouseUp}
       onPointerMove={onMouseMove}
-      // onMouseDown={onMouseDown}
-      // onMouseMove={onMouseMove}
+    // onMouseDown={onMouseDown}
+    // onMouseMove={onMouseMove}
     >
       {showRotationIcon ? (
         <StyledRotateIcon widthInEm={2} isReverse={reverse}></StyledRotateIcon>
