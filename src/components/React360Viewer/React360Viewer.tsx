@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import AnimationImage from "../AnimationImage/AnimationImage";
 import StyledRotateIcon from "../icons/StyledRotateIcon";
-import type { HtmlHTMLAttributes } from "react";
+import type { HtmlHTMLAttributes, ReactNode } from "react";
 
 // The regular % can return negative numbers.
 function moduloWithoutNegative(value: number, n: number): number {
@@ -27,6 +27,7 @@ export interface React360ViewerProps {
   height?: number;
   zeroPad?: ZeroPadRange;
   showRotationIconOnStartup?: boolean;
+  customRotationIcon?: () => ReactNode;
   notifyOnPointerDown?: (x: number, y: number) => void;
   notifyOnPointerUp?: (x: number, y: number) => void;
   notifyOnPointerMoved?: (x: number, y: number) => void;
@@ -73,6 +74,7 @@ export const React360Viewer = ({
   height = 150,
   zeroPad = 0,
   showRotationIconOnStartup = false,
+  customRotationIcon,
   imageInitialIndex = 0,
   shouldNotifyEvents = false,
   notifyOnPointerDown,
@@ -250,7 +252,15 @@ export const React360Viewer = ({
     // onMouseMove={onMouseMove}
     >
       {showRotationIcon ? (
-        <StyledRotateIcon widthInEm={2} isReverse={reverse}></StyledRotateIcon>
+        <>
+          {
+            customRotationIcon ? (
+              <>{customRotationIcon()}</>
+            ) : (
+              <StyledRotateIcon widthInEm={2} isReverse={reverse}></StyledRotateIcon>
+            )
+          }
+        </>
       ) : null}
       {imageSources.map((s, index) => (
         <AnimationImage
