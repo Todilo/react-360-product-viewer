@@ -61,6 +61,7 @@ const StyledDiv = styled.div<StyleProps>`
 export const React360Viewer = ({
   imagesCount,
   imagesBaseUrl,
+  imageIndexSeparator,
   imagesFiletype,
   imageFilenamePrefix,
   mouseDragSpeed = 20,
