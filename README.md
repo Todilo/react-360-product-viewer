@@ -150,6 +150,7 @@ _For more example and a playground please refer to [storybook](https://todilo.gi
 | notifyOnPointerUp         | function                     | not set | Pass your own function that takes x, y as arguments . Will be called when mouse or touch is released.                            | -                                            |
 | notifyOnPointerMoved      | function                     | not set | Pass your own function that takes x, y as arguments . Will be called any time the mouse or touch is moved if being pressed down. |                                              |
 
+
 <!-- ROADMAP -->
 
 ## Roadmap
