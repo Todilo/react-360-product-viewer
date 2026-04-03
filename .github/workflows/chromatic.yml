@@ -8,23 +8,32 @@ on:
 
 jobs:
   chromatic:
-    if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
     runs-on: ubuntu-latest
+    env:
+      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
     steps:
+      - name: Skip when Chromatic token is not configured
+        if: ${{ env.CHROMATIC_PROJECT_TOKEN == '' }}
+        run: echo "CHROMATIC_PROJECT_TOKEN is not configured. Skipping Chromatic publish."
+
       - name: Checkout repository
+        if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
+        if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' }}
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
       - name: Install dependencies
+        if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' }}
         run: npm ci
 
       - name: Publish to Chromatic
-        run: npm run chromatic -- --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' }}
+        run: npm run chromatic -- --project-token=${{ env.CHROMATIC_PROJECT_TOKEN }}
