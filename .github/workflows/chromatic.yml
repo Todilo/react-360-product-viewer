@@ -19,7 +19,7 @@ jobs:
 
       - name: Checkout repository
         if: ${{ env.CHROMATIC_PROJECT_TOKEN != '' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
