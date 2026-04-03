@@ -1,0 +1,36 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore"
+    groups:
+      storybook:
+        patterns:
+          - "@storybook/*"
+          - "storybook"
+          - "@chromatic-com/storybook"
+          - "chromatic"
+      rollup:
+        patterns:
+          - "rollup"
+          - "@rollup/*"
+      babel:
+        patterns:
+          - "@babel/*"
+          - "babel-loader"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+          - "styled-components"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"

@@ -1,4 +1,4 @@
-name: Chromatic
+name: CI
 
 on:
   pull_request:
@@ -7,15 +7,12 @@ on:
       - master
 
 jobs:
-  chromatic:
-    if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
+  verify:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -26,5 +23,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Publish to Chromatic
-        run: npm run chromatic -- --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      - name: Verify package build
+        run: npm test
+
+      - name: Verify Storybook build
+        run: npm run build-storybook

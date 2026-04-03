@@ -84,12 +84,12 @@ Main features:
 
 ## Getting Started
 
-WARNING: This project is not yet available for download using NPM , the following test is merely a stub. Will be updated when the component is ready to be used.
+The package is published on npm and the repository now uses GitHub Actions plus Changesets for versioning and releases.
 
 ### Prerequisites
 
 _React_
-In order to use the component you need a _React_ project. This was built and tested with 17.0.2 but other versions should work.
+In order to use the component you need a _React_ project. The library supports React 18 and React 19.
 
 ### Installation
 
@@ -124,6 +124,16 @@ _Make sure you have a react project - otherwise use: ._
 
 TODO: Add descriptions of all parameters
 _For more example and a playground please refer to [storybook](https://todilo.github.io/react-360-product-viewer)_
+
+## Releases
+
+Releases are managed through Changesets:
+
+```sh
+npm run changeset
+```
+
+Add a changeset in the pull request that changes the package. When the pull request is merged to `master`, GitHub Actions will open or update a release PR. Merging that release PR publishes the package to npm and creates the corresponding GitHub release automatically.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
