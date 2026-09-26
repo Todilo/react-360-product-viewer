@@ -1,5 +1,5 @@
 import RotateIcon from "./RotateIcon";
-import styled, { css } from "styled-components";
+import { styled, css } from "styled-components";
 
 type StyledRotateIconProps = {
   widthInEm: number;

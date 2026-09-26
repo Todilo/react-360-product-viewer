@@ -135,6 +135,10 @@ npm run changeset
 
 Add a changeset in the pull request that changes the package. When the pull request is merged to `master`, GitHub Actions will open or update a release PR. Merging that release PR publishes the package to npm and creates the corresponding GitHub release automatically.
 
+The npm package has a Trusted Publisher configured for GitHub owner `Todilo`, repository `react-360-product-viewer`, and workflow filename `release.yml`, with direct `npm publish` enabled. The release job uses Node 24 and GitHub's OIDC identity; no npm write token is needed. If the connection is recreated, these values must match the workflow and the npm package settings.
+
+GitHub may require a maintainer to approve CI runs on a release PR created with `GITHUB_TOKEN`. Check that the release PR's required checks have run before merging it.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # API
