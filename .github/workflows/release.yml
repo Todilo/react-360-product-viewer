@@ -36,11 +36,10 @@ jobs:
 
       - name: Create release PR or publish package
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          publish: npm run release
-          version: npm run version-packages
-          title: "chore: release package"
-          commit: "chore: release package"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          publish-script: npm run release
+          version-script: npm run version-packages
+          pr-title: "chore: release package"
+          commit-message: "chore: release package"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
