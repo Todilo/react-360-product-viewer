@@ -3,12 +3,12 @@
   "version": "0.2.10",
   "description": "Showcase your products in this 360 viewer component.",
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.esm.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     }
   },
@@ -30,7 +30,8 @@
     "build": "npm run clean && npm run build-lib",
     "build-lib": "rollup -c",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "test": "npm run typecheck && npm run build",
+    "test": "npm run typecheck && npm run build && npm run test:package",
+    "test:package": "node tests/package.test.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "changeset": "changeset",

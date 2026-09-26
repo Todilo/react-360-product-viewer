@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "target": "es5",
+    "rootDir": "./src",
     "outDir": "./dist",
     "lib": ["dom", "dom.iterable", "esnext"],
     "declaration": true,
