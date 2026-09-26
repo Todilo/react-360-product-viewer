@@ -12,9 +12,10 @@ var config = {
       file: "dist/index.js",
       format: "cjs",
       sourcemap: true,
+      interop: "auto",
     },
     {
-      file: "dist/index.esm.js",
+      file: "dist/index.mjs",
       format: "esm",
       sourcemap: true,
       exports: "named",
