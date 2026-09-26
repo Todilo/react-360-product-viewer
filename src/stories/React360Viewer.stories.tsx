@@ -1,10 +1,8 @@
-import { Meta, StoryFn } from "@storybook/react-webpack5";
+import type { Meta, StoryFn } from "@storybook/react-webpack5";
 import React from "react";
 
-import {
-  React360Viewer,
-  React360ViewerProps,
-} from "../components/React360Viewer";
+import { React360Viewer } from "../components/React360Viewer";
+import type { React360ViewerProps } from "../components/React360Viewer";
 
 export default {
   title: "React360Viewer",
