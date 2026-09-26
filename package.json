@@ -71,7 +71,6 @@
     "@storybook/react-webpack5": "^10.1.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitest/mocker": "^4.0.14",
     "babel-loader": "^10.0.0",
     "chromatic": "^16.1.0",
     "jsdom": "^29.1.1",

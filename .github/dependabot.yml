@@ -7,6 +7,10 @@ updates:
     open-pull-requests-limit: 10
     commit-message:
       prefix: "chore"
+    ignore:
+      # TypeScript 7.0 has no compiler API, which @rollup/plugin-typescript uses.
+      - dependency-name: "typescript"
+        versions: ["7.0.x"]
     groups:
       storybook:
         patterns:
