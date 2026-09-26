@@ -2,7 +2,7 @@ import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import postcss from "rollup-plugin-postcss";
-import ts from "@rollup/plugin-typescript";
+import swc from "@rollup/plugin-swc";
 import terser from "@rollup/plugin-terser";
 
 var config = {
@@ -23,9 +23,17 @@ var config = {
   ],
   plugins: [
     peerDepsExternal(),
-    resolve(),
+    resolve({ extensions: [".mjs", ".js", ".json", ".node", ".ts", ".tsx"] }),
     commonjs(),
-    ts({}),
+    swc({
+      swc: {
+        jsc: {
+          target: "es2015",
+          parser: { syntax: "typescript", tsx: true },
+          transform: { react: { runtime: "classic" } },
+        },
+      },
+    }),
     postcss({
       extensions: [".css"],
     }),
