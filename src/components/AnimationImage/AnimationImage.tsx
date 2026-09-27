@@ -6,17 +6,32 @@ interface ImageProps {
   isVisible: boolean;
   width: number;
   height: number;
+  fillContainer: boolean;
+  imagePosition?: string;
 }
 
-interface StyledImageProps {}
+interface StyledImageProps {
+  $fillContainer: boolean;
+  $imagePosition?: string;
+}
 const StyledImage = styled.img<StyledImageProps>`
   user-select: none;
   touch-action: none;
   cursor: inherit;
   -webkit-user-drag: none;
+  ${(props) =>
+    props.$fillContainer &&
+    `width: 100%; height: 100%; object-fit: contain; object-position: ${props.$imagePosition ?? "center"};`}
 `;
 
-const AnimationImage = ({ src, isVisible, width, height }: ImageProps) => {
+const AnimationImage = ({
+  src,
+  isVisible,
+  width,
+  height,
+  fillContainer,
+  imagePosition,
+}: ImageProps) => {
   let d = isVisible ? "block" : "none";
   return (
     <StyledImage
@@ -24,6 +39,8 @@ const AnimationImage = ({ src, isVisible, width, height }: ImageProps) => {
       src={src}
       width={width}
       height={height}
+      $fillContainer={fillContainer}
+      $imagePosition={imagePosition}
       style={{ display: `${d}` }}
     ></StyledImage>
   );
