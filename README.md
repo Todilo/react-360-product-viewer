@@ -143,28 +143,32 @@ GitHub may require a maintainer to approve CI runs on a release PR created with 
 
 # API
 
-| Parameter                 | Type                         | Default | Description                                                                                                                      | Example                                      |
-| ------------------------- | ---------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| imagesCount               | number                       | none    | Set the number of images in your sequence                                                                                        | 35                                           |
-| imageBaseUrl              | string                       | none    | Set URL from the base of your homepage                                                                                           | | imageIndexSeparator              | string                       | none    | Set URL from the base of your homepage                                                                                           |
-./imageSeries/                               |
-| imagesFileTyp             | string                       | none    | Image type (anything that can be rendered in an _img_ tag)                                                                       | png                                          |
-| imageFilenamePrefix       | string                       | none    | Add a prefix before the image number                                                                                             | shoe (if entire image filename is shoe2.png) |
-| imageInitialIndex         | number                       | 0       | Which imagenumber to show on component load                                                                                      | 10                                           |
-| mouseDragSPeed            | number                       | 20      | How fast to change images when pointer moves                                                                                     | 20                                           |
-| autoplaySpeed             | number                       | 10      | How fast to change images when autoplay is active                                                                                | 10                                           |
-| reverse                   | boolean                      | false   | Reverse the order of images displayed. Applicable for both pointer as well as autoplay                                           | false                                        |
-| autoplay                  | boolean                      | false   | Should the images automatically change on component load                                                                         | false                                        |
-| autoplayTarget            | number                       | none    | The autoplay will stop on given image index                                                                                      | 15                                           |
-| width                     | number                       | 150     | With of the image                                                                                                                | 150                                          |
-| height                    | number                       | 150     | Height of the image                                                                                                              | 150                                          |
-| zeroPad                   | ZeroPadRange (number 0 to 9) | 0       | Num zeros to prepend to your image number (if you set 1, your image numbers will be 01, 02..., 09, 10, 11)                       | 1                                            |
-| showRotationIconOnStartup | boolean                      | false   | If true, a small icon representing a rotation which should inform the user that the component can be rotated.                    | false                                        |
-| customRotationIcon | function returning SVG icon                      |    | Set rotation icon that renders on startup                    | () => SOME JSX or SVG                                      |
-| shouldNotifyEvents        | boolean                      | false   | If true the component will notify on some events. This can be a lot of event so use with caution.                                | false                                        |
-| notifyOnPointerDown       | function                     | not set | Pass your own function that takes x, y as arguments. Will be called when mouse or touch is pressed.                              | -                                            |
-| notifyOnPointerUp         | function                     | not set | Pass your own function that takes x, y as arguments . Will be called when mouse or touch is released.                            | -                                            |
-| notifyOnPointerMoved      | function                     | not set | Pass your own function that takes x, y as arguments . Will be called any time the mouse or touch is moved if being pressed down. |                                              |
+| Prop | Default | Description |
+| --- | --- | --- |
+| `imagesCount` | Required | Number of frames in the image sequence. |
+| `imagesBaseUrl` | Required | Base URL of the image sequence, for example `/frames/`. |
+| `imagesFiletype` | Required | Image extension, for example `png`. |
+| `imageIndexSeparator` | `/` unless the URL ends in `/` | Text between the base URL and filename. |
+| `imageFilenamePrefix` | Empty | Text before each frame number. |
+| `imageInitialIndex` | `0` | Initial frame index, starting at zero. |
+| `mouseDragSpeed` | `20` | Frame change sensitivity while dragging. |
+| `inertia` | `false` | Smooths dragging toward the pointer position. It does not add momentum after release. |
+| `autoplay` | `false` | Advance frames automatically. |
+| `autoplaySpeed` | `10` | Frames per second. |
+| `autoplayTarget` | None | Stop when this zero-based frame index is reached, including when looping is enabled. |
+| `autoplayLoop` | `true` | When `false`, stop after one full revolution or at `autoplayTarget`, whichever comes first. |
+| `stopAutoplayOnInteraction` | `true` | When `false`, resume autoplay after a pointer interaction ends. |
+| `reverse` | `false` | Reverse drag and autoplay direction. |
+| `width`, `height` | `150` | Image dimensions in pixels when `fillContainer` is off; `width` also sets drag sensitivity in that mode. |
+| `fillContainer` | `false` | Fill the parent element's width and height and fit images inside it. Give the parent an explicit size. |
+| `imagePosition` | `center` | CSS `object-position` used when `fillContainer` is on. |
+| `zeroPad` | `0` | Number of leading zeroes before one-digit frame numbers. |
+| `showRotationIconOnStartup` | `false` | Show the rotation hint before interaction. |
+| `customRotationIcon` | None | Function returning a custom rotation hint. |
+| `shouldNotifyEvents` | `false` | Enable the coordinate callbacks below. |
+| `notifyOnPointerDown`, `notifyOnPointerUp`, `notifyOnPointerMoved` | None | Callbacks receiving pointer `x` and `y` coordinates. |
+
+Standard HTML `div` attributes, including `className`, `style`, ARIA attributes, and pointer handlers, are forwarded to the viewer container.
 
 
 <!-- ROADMAP -->
@@ -178,7 +182,7 @@ GitHub may require a maintainer to approve CI runs on a release PR created with 
 - [x] Document API
 - [x] Allow for external URI:s as imagesources
 - [ ] Example on how to layout images
-- [ ] Add inertia
+- [x] Add smoothed dragging (`inertia`)
 - [ ] Supply events
   - [ ] Autoplay finished
   - [ ] Image changed
@@ -206,6 +210,10 @@ Don't forget to give the project a star! Thanks again!
 5. Open a Pull Request
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+## Acknowledgments
+
+The autoplay controls, smoothed dragging, and container-fitting options were inspired by [Andrew Leek's fork](https://github.com/andrewleek/react-360-product-viewer). Thank you, Andrew, for sharing the ideas and implementation.
 
 <!-- LICENSE -->
 

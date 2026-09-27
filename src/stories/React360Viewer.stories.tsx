@@ -51,3 +51,20 @@ AutoPlayReversed.args = {
 AutoPlayReversed.parameters = {
   chromatic: { disableSnapshot: true },
 };
+
+export const SmoothedDrag = Template.bind({});
+SmoothedDrag.args = {
+  ...baseImageSetting,
+  inertia: true,
+} as React360ViewerProps;
+
+export const FillContainer: StoryFn<typeof React360Viewer> = (args) => (
+  <div style={{ width: 320, height: 240, border: "1px solid red" }}>
+    <React360Viewer {...args} />
+  </div>
+);
+FillContainer.args = {
+  ...baseImageSetting,
+  fillContainer: true,
+  imagePosition: "center center",
+} as React360ViewerProps;

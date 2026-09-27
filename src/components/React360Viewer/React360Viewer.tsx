@@ -9,6 +9,23 @@ function moduloWithoutNegative(value: number, n: number): number {
   return ((value % n) + n) % n;
 }
 
+function imageIndexForDrag(
+  startIndex: number,
+  startX: number,
+  currentX: number,
+  imagesCount: number,
+  reverse: boolean,
+  mouseDragSpeed: number,
+  dragWidth: number
+): number {
+  const speedFactor = (imagesCount * dragWidth) / (mouseDragSpeed * 100);
+  const offset = Math.floor((currentX - startX) / speedFactor);
+  return moduloWithoutNegative(
+    startIndex + (reverse ? -1 : 1) * offset,
+    imagesCount
+  );
+}
+
 export type ZeroPadRange = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export interface React360ViewerProps {
@@ -21,10 +38,19 @@ export interface React360ViewerProps {
   mouseDragSpeed?: number;
   autoplaySpeed?: number;
   reverse?: boolean;
+  /** Smooth pointer movement toward the current drag position. */
+  inertia?: boolean;
   autoplay?: boolean;
   autoplayTarget?: number;
+  /** When false, stop after one full revolution (or at autoplayTarget). */
+  autoplayLoop?: boolean;
+  /** When false, resume autoplay after a pointer interaction ends. */
+  stopAutoplayOnInteraction?: boolean;
   width?: number;
   height?: number;
+  /** Fill the containing element while preserving the image aspect ratio. */
+  fillContainer?: boolean;
+  imagePosition?: string;
   zeroPad?: ZeroPadRange;
   showRotationIconOnStartup?: boolean;
   customRotationIcon?: () => ReactNode;
@@ -40,6 +66,7 @@ export type React360ViewerPropsExtended = HtmlHTMLAttributes<HTMLDivElement> &
 
 interface StyleProps {
   $isGrabbing: boolean;
+  $fillContainer: boolean;
 }
 
 const StyledDiv = styled.div<StyleProps>`
@@ -47,6 +74,9 @@ const StyledDiv = styled.div<StyleProps>`
   border: none;
   padding: 5px;
   display: inline-block;
+  ${(props) =>
+    props.$fillContainer &&
+    "box-sizing: border-box; width: 100%; height: 100%;"}
   user-select: none;
   touch-action: none;
   ${(props) =>
@@ -67,11 +97,16 @@ export const React360Viewer = ({
   imageFilenamePrefix,
   mouseDragSpeed = 20,
   reverse = false,
+  inertia = false,
   autoplaySpeed = 10,
   autoplay = false,
   autoplayTarget,
+  autoplayLoop = true,
+  stopAutoplayOnInteraction = true,
   width = 150,
   height = 150,
+  fillContainer = false,
+  imagePosition,
   zeroPad = 0,
   showRotationIconOnStartup = false,
   customRotationIcon,
@@ -80,9 +115,20 @@ export const React360Viewer = ({
   notifyOnPointerDown,
   notifyOnPointerUp,
   notifyOnPointerMoved,
+  onPointerDown: onPointerDownProp,
+  onPointerUp: onPointerUpProp,
+  onPointerCancel: onPointerCancelProp,
+  onPointerMove: onPointerMoveProp,
+  onLostPointerCapture: onLostPointerCaptureProp,
+  ...containerProps
 }: React360ViewerPropsExtended) => {
+  const viewerRef = useRef<HTMLDivElement>(null);
   const activePointerId = useRef<number | null>(null);
+  const autoplaySteps = useRef(0);
+  const smoothedMousePosition = useRef(0);
+  const targetMousePosition = useRef(0);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isSettling, setIsSettling] = useState(false);
   const [initialMousePosition, setInitialMousePosition] = useState(0);
   const [startingImageIndexOnPointerDown, setStartingImageIndexOnPointerDown] =
     useState(0);
@@ -97,7 +143,10 @@ export const React360Viewer = ({
   const [useAutoplay, setUseAutoplay] = useState(autoplay);
   useEffect(() => {
     setUseAutoplay(autoplay);
+    autoplaySteps.current = 0;
+  }, [autoplay]);
 
+  useEffect(() => {
     setShowRotationIcon(!autoplay && showRotationIconOnStartup);
   }, [autoplay, showRotationIconOnStartup]);
 
@@ -122,20 +171,47 @@ export const React360Viewer = ({
     imagesCount,
     autoplaySpeed,
     autoplayTarget,
+    autoplayLoop,
   ]);
 
   const incrementImageIndex = (change: number) => {
-    let index = moduloWithoutNegative(
+    const index = moduloWithoutNegative(
       selectedImageIndex + (reverse ? -1 : 1) * Math.floor(change),
       imagesCount
     );
 
     setSelectedImageIndex(index);
+    autoplaySteps.current += 1;
 
-    if (autoplayTarget !== undefined && index === autoplayTarget) {
+    if (
+      (autoplayTarget !== undefined && index === autoplayTarget) ||
+      (!autoplayLoop && autoplaySteps.current >= imagesCount)
+    ) {
       setUseAutoplay(false);
     }
   };
+
+  useEffect(() => {
+    if (!inertia || !isSettling) return;
+
+    let frame: number;
+    const smoothDrag = () => {
+      const remaining = targetMousePosition.current - smoothedMousePosition.current;
+      if (Math.abs(remaining) < 0.5) {
+        smoothedMousePosition.current = targetMousePosition.current;
+        setCurrentMousePosition(targetMousePosition.current);
+        frame = requestAnimationFrame(() => setIsSettling(false));
+        return;
+      }
+
+      smoothedMousePosition.current += remaining * 0.2;
+      setCurrentMousePosition(smoothedMousePosition.current);
+      frame = requestAnimationFrame(smoothDrag);
+    };
+
+    frame = requestAnimationFrame(smoothDrag);
+    return () => cancelAnimationFrame(frame);
+  }, [inertia, isSettling]);
 
   const imageSources = useMemo(() => {
     const baseUrl =
@@ -165,10 +241,14 @@ export const React360Viewer = ({
     if (activePointerId.current !== null || imagesCount <= 0) return;
     activePointerId.current = e.pointerId;
     e.currentTarget.setPointerCapture(e.pointerId);
+    setIsSettling(false);
+    smoothedMousePosition.current = e.clientX;
+    targetMousePosition.current = e.clientX;
     setInitialMousePosition(e.clientX);
     setCurrentMousePosition(e.clientX);
     setStartingImageIndexOnPointerDown(selectedImageIndex);
     setUseAutoplay(false);
+    autoplaySteps.current = 0;
     setIsScrolling(true);
     setShowRotationIcon(false);
 
@@ -179,6 +259,28 @@ export const React360Viewer = ({
     if (activePointerId.current !== e.pointerId) return;
     activePointerId.current = null;
     setIsScrolling(false);
+    if (autoplay && !stopAutoplayOnInteraction) {
+      setIsSettling(false);
+      setCurrentMousePosition(targetMousePosition.current);
+      const dragWidth = fillContainer
+        ? viewerRef.current?.clientWidth || width
+        : width;
+      if (imagesCount > 0 && mouseDragSpeed > 0 && dragWidth > 0) {
+        setSelectedImageIndex(
+          imageIndexForDrag(
+            startingImageIndexOnPointerDown,
+            initialMousePosition,
+            targetMousePosition.current,
+            imagesCount,
+            reverse,
+            mouseDragSpeed,
+            dragWidth
+          )
+        );
+      }
+      autoplaySteps.current = 0;
+      setUseAutoplay(true);
+    }
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId);
     }
@@ -188,52 +290,78 @@ export const React360Viewer = ({
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (activePointerId.current !== e.pointerId) return;
 
-    setCurrentMousePosition(e.clientX);
+    targetMousePosition.current = e.clientX;
+    if (inertia) {
+      setIsSettling(true);
+    } else {
+      setCurrentMousePosition(e.clientX);
+    }
 
     if (shouldNotifyEvents) notifyOnPointerMoved?.(e.clientX, e.clientY);
   };
 
   useEffect(() => {
-    const imageIndexWithOffset = (start: number, offset: number) => {
-      let index = moduloWithoutNegative(
-        start + (reverse ? -1 : 1) * Math.floor(offset),
-        imagesCount
-      );
-      setSelectedImageIndex(index);
-    };
-
-    if (!isScrolling || imagesCount <= 0 || mouseDragSpeed <= 0 || width <= 0)
+    const dragWidth = fillContainer
+      ? viewerRef.current?.clientWidth || width
+      : width;
+    if (
+      (!isScrolling && !isSettling) ||
+      imagesCount <= 0 ||
+      mouseDragSpeed <= 0 ||
+      dragWidth <= 0
+    )
       return;
 
-    // Aim is to get a speedfactor that can be easily adjusted from a user perspective
-    // as well as proportionate to the size of the image.
-    const scaleFactor = 100;
-    let speedFactor =
-      (1 / mouseDragSpeed) * ((imagesCount * width) / scaleFactor);
-    const changeInX = currentMousePosition - initialMousePosition;
-
-    let difference = changeInX / speedFactor;
-
-    imageIndexWithOffset(startingImageIndexOnPointerDown, difference);
+    setSelectedImageIndex(
+      imageIndexForDrag(
+        startingImageIndexOnPointerDown,
+        initialMousePosition,
+        currentMousePosition,
+        imagesCount,
+        reverse,
+        mouseDragSpeed,
+        dragWidth
+      )
+    );
   }, [
     currentMousePosition,
     imagesCount,
     startingImageIndexOnPointerDown,
     initialMousePosition,
     isScrolling,
+    isSettling,
     mouseDragSpeed,
     width,
+    fillContainer,
     reverse,
   ]);
 
   return (
     <StyledDiv
+      {...containerProps}
+      ref={viewerRef}
       $isGrabbing={isScrolling}
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerEnd}
-      onPointerCancel={onPointerEnd}
-      onPointerMove={onPointerMove}
-      onLostPointerCapture={onPointerEnd}
+      $fillContainer={fillContainer}
+      onPointerDown={(event) => {
+        onPointerDown(event);
+        onPointerDownProp?.(event);
+      }}
+      onPointerUp={(event) => {
+        onPointerEnd(event);
+        onPointerUpProp?.(event);
+      }}
+      onPointerCancel={(event) => {
+        onPointerEnd(event);
+        onPointerCancelProp?.(event);
+      }}
+      onPointerMove={(event) => {
+        onPointerMove(event);
+        onPointerMoveProp?.(event);
+      }}
+      onLostPointerCapture={(event) => {
+        onPointerEnd(event);
+        onLostPointerCaptureProp?.(event);
+      }}
     >
       {showRotationIcon ? (
         <>
@@ -251,6 +379,8 @@ export const React360Viewer = ({
           src={src}
           width={width}
           height={height}
+          fillContainer={fillContainer}
+          imagePosition={imagePosition}
           isVisible={index === selectedImageIndex}
           key={src}
         ></AnimationImage>
